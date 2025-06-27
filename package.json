@@ -1,0 +1,44 @@
+{
+  "name": "auto-repair-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.4.0",
+    "@supabase/supabase-js": "^2.39.7",
+    "date-fns": "^3.6.0",
+    "framer-motion": "^11.0.8",
+    "heic2any": "^0.0.4",
+    "html-to-image": "^1.11.11",
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.1",
+    "jspdf": "^2.5.1",
+    "lucide-react": "^0.330.0",
+    "openai": "^4.103.0",
+    "pdfjs-dist": "^3.11.174",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.5.2",
+    "react-router-dom": "^6.22.1",
+    "recharts": "^2.15.3",
+    "signature_pad": "^4.1.6",
+    "tesseract.js": "^4.1.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "vite": "^5.0.10"
+  }
+}
