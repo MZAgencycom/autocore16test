@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import withTimeout from '../utils/withTimeout'
+import { withTimeout } from '../utils/withTimeout'
 import { useNavigate, useLocation } from 'react-router-dom'
 import supabase, { usingMockSupabase, refreshSessionIfNeeded } from '../lib/supabaseClient'
 
