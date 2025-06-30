@@ -3,7 +3,7 @@ import { createCheckoutSession } from './stripeClient';
 
 let stripePromise;
 
-export async function getStripe() {
+export const getStripe = async () => {
   if (!stripePromise) {
     try {
       stripePromise = await loadStripe(
@@ -15,7 +15,7 @@ export async function getStripe() {
     }
   }
   return stripePromise;
-}
+};
 
 /**
  * Redirects to Stripe Checkout for the specified product
