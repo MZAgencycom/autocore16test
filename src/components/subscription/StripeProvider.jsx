@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
-import { stripePromise } from '../../lib/stripe';
+import { getStripe } from '../../lib/stripe';
 
 const StripeProvider = ({ children }) => {
   const [clientSecret, setClientSecret] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [stripePromise, setStripePromise] = useState(null);
 
   // Check if Stripe is properly configured
   useEffect(() => {
@@ -30,8 +31,9 @@ const StripeProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-    
+
     checkStripeConfig();
+    getStripe().then(p => setStripePromise(p));
   }, []);
 
   // If there's no Stripe config, still render children
@@ -50,13 +52,15 @@ const StripeProvider = ({ children }) => {
     },
   };
 
-  return (
+  return stripePromise ? (
     <Elements stripe={stripePromise} options={options}>
       {children}
     </Elements>
+  ) : (
+    children
   );
 };
 
 export default StripeProvider;
 
-export { StripeProvider }
+export { StripeProvider };

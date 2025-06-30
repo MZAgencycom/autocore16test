@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import withTimeout from "../../utils/withTimeout";
+import { withTimeout } from "../../utils/withTimeout";
 import heic2any from "heic2any";
 import compressImage from "../../utils/imageCompression.js";
 import { useNavigate, useLocation, Link } from "react-router-dom";
