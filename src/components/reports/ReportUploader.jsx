@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import withTimeout from '../../utils/withTimeout';
+import { withTimeout } from '../../utils/withTimeout';
 import downloadFile from '../../utils/downloadFile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
