@@ -8,7 +8,7 @@ import EmailSender from '../../components/communication/EmailSender';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '../../lib/supabase';
-import withTimeout from '../../utils/withTimeout';
+import { withTimeout } from '../../utils/withTimeout';
 import cleanupStorage from '../../utils/cleanupStorage';
 
 const InvoiceDetail = () => {

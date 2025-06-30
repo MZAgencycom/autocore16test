@@ -1,8 +1,21 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { createCheckoutSession } from './stripeClient';
 
-// Initialize Stripe with your publishable key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+let stripePromise;
+
+export const getStripe = async () => {
+  if (!stripePromise) {
+    try {
+      stripePromise = await loadStripe(
+        import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+      );
+    } catch (e) {
+      console.warn('⚠️ Stripe bloqué (Adblock ?)');
+      stripePromise = null;
+    }
+  }
+  return stripePromise;
+};
 
 /**
  * Redirects to Stripe Checkout for the specified product
@@ -29,5 +42,3 @@ export async function redirectToCheckout(priceId, mode = 'subscription') {
     throw error;
   }
 }
-
-export { stripePromise };
