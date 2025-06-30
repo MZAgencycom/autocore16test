@@ -107,6 +107,18 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval)
   }, [])
 
+  // Sync session across tabs
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key && event.key.startsWith('sb-') && event.newValue !== event.oldValue) {
+        checkSession()
+      }
+    }
+
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [checkSession])
+
   // Set up auth state listener
   useEffect(() => {
     if (!supabase) {
