@@ -63,4 +63,4 @@ const StripeProvider = ({ children }) => {
 
 export default StripeProvider;
 
-export { StripeProvider }
+export { StripeProvider };
