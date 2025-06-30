@@ -6,3 +6,5 @@ export const withTimeout = (promise, timeout = 8000) => {
     )
   ]);
 };
+export default withTimeout;
+
