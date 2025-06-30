@@ -42,3 +42,5 @@ export async function redirectToCheckout(priceId, mode = 'subscription') {
     throw error;
   }
 }
+export { getStripe };
+
