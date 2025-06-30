@@ -102,9 +102,11 @@ function App() {
           console.log('[App] Session rafraîchie automatiquement');
           break;
         case 'session_expired':
-          console.log('[App] Session expirée, redirection vers login');
+          console.log('[App] Session expirée');
           toast.error("Votre session a expiré. Veuillez vous reconnecter.");
-          navigate('/login');
+          if (!['/login', '/force-refresh'].includes(location.pathname)) {
+            navigate('/force-refresh');
+          }
           break;
         case 'session_verified':
           console.log('[App] Session vérifiée après retour d\'onglet');
@@ -118,7 +120,7 @@ function App() {
       unsubscribe();
       sessionManager.cleanup();
     };
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   // Check session initial
   const memoizedCheckSession = useCallback(() => {

@@ -31,7 +31,7 @@ const invoiceSchema = z.object({
 
 const InvoiceEditor = () => {
   const navigate = useNavigate();
-  const { executeWithValidSession } = useSession();
+  const { executeWithValidSession, refreshSession } = useSession();
   const { invoiceId } = useParams();
 
   // Mode d'utilisation de ce composant
@@ -63,6 +63,11 @@ const InvoiceEditor = () => {
 
   // Provide access to the invoice loader for visibility handler
   const fetchInvoiceDetailsRef = useRef(null);
+
+  // Ensure session is fresh when opening the editor
+  useEffect(() => {
+    refreshSession();
+  }, [refreshSession]);
 
 
   const round = (num) => Math.round(num * 100) / 100;
