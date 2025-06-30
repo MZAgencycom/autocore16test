@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import withTimeout from '../utils/withTimeout'
+import { withTimeout } from '../utils/withTimeout'
 import { useNavigate, useLocation } from 'react-router-dom'
 import supabase, { usingMockSupabase, refreshSessionIfNeeded } from '../lib/supabaseClient'
 
@@ -130,87 +130,38 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorage)
   }, [checkSession])
 
-  // Set up auth state listener
+  // Chargement initial de la session et écoute des changements d'auth
   useEffect(() => {
-    if (!supabase) {
-      console.error('Supabase client is not initialized')
-      setIsLoading(false)
-      return
+    const fetchSession = async () => {
+      try {
+        const { data, error } = await withTimeout(
+          supabase.auth.getSession(),
+          8000
+        )
+        if (error || !data?.session) {
+          console.warn('Session absente ou erreur :', error)
+          setSession(null)
+        } else {
+          setSession(data.session)
+        }
+      } catch (err) {
+        console.error('⛔️ Timeout ou fetch session échoué :', err.message)
+        setSession(null)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    
-    checkSession();
-    
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
-        if (import.meta?.env?.DEV) console.log('Auth state change:', event);
-        setSession(newSession);
-        setUser(newSession?.user || null);
-        setIsLoading(false);
-        
-        // Éviter les redirections en boucle - ne pas rediriger si on est déjà sur la page cible
-        if (event === 'SIGNED_IN') {
-          // Assigner la période d'essai si elle n'existe pas déjà (pour Google Auth)
-          try {
-            if (!newSession.user.user_metadata?.trial_status) {
-              await supabase.auth.updateUser({
-                data: {
-                  trial_status: 'actif',
-                  trial_days: 7,
-                  reports_remaining: 10,
-                  invoices_remaining: 10
-                }
-              });
-            }
-          } catch (metaError) {
-            console.error('Error setting trial metadata:', metaError);
-          }
 
-          try {
-            const { data, error } = await supabase
-              .from('users_extended')
-              .select('company_name, address_city')
-              .eq('id', newSession.user.id)
-              .single();
+    fetchSession()
 
-            const needsOnboarding = error || !data || !data.company_name || !data.address_city;
-
-            // Empêcher les redirections si on est déjà sur la page cible
-            if (needsOnboarding) {
-              if (!location.pathname.startsWith('/onboarding')) {
-                navigate('/onboarding');
-              }
-            } else if (!location.pathname.startsWith('/dashboard') && 
-                       !location.pathname.startsWith('/onboarding')) {
-              navigate('/dashboard');
-            }
-          } catch (error) {
-            console.error('Error checking user profile:', error);
-            // Ne rediriger que si on n'est pas déjà sur la page d'onboarding
-            if (!location.pathname.startsWith('/onboarding')) {
-              navigate('/onboarding');
-            }
-          }
-        } else if (event === 'SIGNED_OUT') {
-          if (location.pathname !== '/login' &&
-              !location.pathname.startsWith('/register') &&
-              !location.pathname.startsWith('/auth/callback')) {
-            navigate('/login');
-          }
-        }
-
-        // If the user is signed out and there is no active session,
-        // simply remain on the current page instead of forcing a full
-        // page reload which previously caused an infinite refresh loop.
-        // Navigation to the appropriate page is handled above.
-        if (!newSession) {
-          setSession(null);
-          setUser(null);
-        }
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session)
       }
     )
 
-    return () => subscription.unsubscribe()
-  }, [navigate, checkSession])
+    return () => authListener.subscription.unsubscribe()
+  }, [])
 
   // Sign up function
   const signUp = async (email, password, metadata) => {
