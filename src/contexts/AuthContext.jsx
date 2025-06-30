@@ -3,6 +3,8 @@ import withTimeout from '../utils/withTimeout'
 import { useNavigate, useLocation } from 'react-router-dom'
 import supabase, { usingMockSupabase, refreshSessionIfNeeded } from '../lib/supabaseClient'
 
+const SESSION_REQUEST_TIMEOUT = 10000 // 10 seconds
+
 const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
@@ -40,7 +42,10 @@ export const AuthProvider = ({ children }) => {
 
       while (!fetchedSession && attempt < 3) {
         try {
-          const { data, error } = await supabase.auth.getSession()
+          const { data, error } = await withTimeout(
+            supabase.auth.getSession(),
+            SESSION_REQUEST_TIMEOUT
+          )
           if (error) throw error
           fetchedSession = data.session
         } catch (err) {
@@ -57,7 +62,10 @@ export const AuthProvider = ({ children }) => {
       if (sessionError && sessionError.message && sessionError.message.includes('Invalid Refresh Token')) {
         if (import.meta?.env?.DEV) console.log('Invalid refresh token detected, refreshing session...')
         await refreshSessionIfNeeded(supabase)
-        const { data: refreshed } = await supabase.auth.getSession()
+        const { data: refreshed } = await withTimeout(
+          supabase.auth.getSession(),
+          SESSION_REQUEST_TIMEOUT
+        )
         setSession(refreshed.session)
         setUser(refreshed.session?.user || null)
         return
@@ -98,7 +106,10 @@ export const AuthProvider = ({ children }) => {
 
     const interval = setInterval(async () => {
       try {
-        await supabase.auth.getSession()
+        await withTimeout(
+          supabase.auth.getSession(),
+          SESSION_REQUEST_TIMEOUT
+        )
       } catch (e) {
         console.error('Erreur keep-alive session :', e.message)
       }
@@ -364,13 +375,19 @@ export const AuthProvider = ({ children }) => {
       const {
         data: { session },
         error
-      } = await supabase.auth.getSession()
+      } = await withTimeout(
+        supabase.auth.getSession(),
+        SESSION_REQUEST_TIMEOUT
+      )
 
       if (!session || error) {
         console.warn(
           'Session expirée, tentative de refresh automatique'
         )
-        await supabase.auth.refreshSession()
+        await withTimeout(
+          supabase.auth.refreshSession(),
+          SESSION_REQUEST_TIMEOUT
+        )
       }
     }, 2 * 60 * 1000) // refresh every 2 minutes
 
@@ -385,7 +402,10 @@ export const AuthProvider = ({ children }) => {
 
     const interval = setInterval(async () => {
       try {
-        const { data, error } = await supabase.auth.refreshSession()
+        const { data, error } = await withTimeout(
+          supabase.auth.refreshSession(),
+          SESSION_REQUEST_TIMEOUT
+        )
         if (error) {
           console.error('Error refreshing session:', error)
         } else if (data?.session) {
