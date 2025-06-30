@@ -3,6 +3,7 @@ import { createCheckoutSession } from './stripeClient';
 
 let stripePromise;
 
+export const getStripe = async () => {
 export async function getStripe() {
   if (!stripePromise) {
     try {
@@ -15,7 +16,7 @@ export async function getStripe() {
     }
   }
   return stripePromise;
-}
+
 
 /**
  * Redirects to Stripe Checkout for the specified product
@@ -43,4 +44,3 @@ export async function redirectToCheckout(priceId, mode = 'subscription') {
   }
 }
 export { getStripe };
-
