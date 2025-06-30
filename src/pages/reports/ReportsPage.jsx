@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import withTimeout from '../../utils/withTimeout';
+import { withTimeout } from '../../utils/withTimeout';
 import downloadFile from '../../utils/downloadFile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Trash2, FileText, User, Car, Hash, Gauge, Eye } from 'lucide-react';
