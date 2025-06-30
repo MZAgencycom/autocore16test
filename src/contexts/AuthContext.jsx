@@ -5,7 +5,7 @@ import supabase, { usingMockSupabase, refreshSessionIfNeeded } from '../lib/supa
 
 const SESSION_REQUEST_TIMEOUT = 10000 // 10 seconds
 
-const AuthContext = createContext(null)
+export const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -396,3 +396,4 @@ export const useAuth = () => {
   return context
 }
 export { AuthContext };
+

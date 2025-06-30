@@ -2,6 +2,19 @@ import { loadStripe } from '@stripe/stripe-js';
 import { createCheckoutSession } from './stripeClient';
 
 let stripePromise;
+export const getStripe = async () => {
+  if (!stripePromise) {
+    try {
+      stripePromise = await loadStripe(
+        import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+      );
+    } catch (e) {
+      console.warn('⚠️ Stripe bloqué (Adblock ?)');
+      stripePromise = null;
+    }
+  }
+  return stripePromise;
+};
 
 /**
  * Récupère l’instance Stripe ou la charge si nécessaire
@@ -34,4 +47,5 @@ export const redirectToCheckout = async (priceId, mode = 'subscription') => {
     console.error('Erreur redirection checkout :', error);
     throw error;
   }
+}
 };
